@@ -40,6 +40,8 @@ class User(AbstractBaseUser,PermissionsMixin):
         unique=True,
         db_index=True
     )
+    first_name = models.CharField(max_length=150, blank=True)
+    last_name = models.CharField(max_length=150, blank=True)
     is_verified = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

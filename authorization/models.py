@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import (BaseUserManager, AbstractBaseUser,PermissionsMixin)
 # from rest_framework_simplejwt.tokens import RefreshToken
+from helper.models import CommonBase
 
 class UserManager(BaseUserManager):
     """
@@ -33,7 +34,7 @@ class UserManager(BaseUserManager):
         return user
 
 
-class User(AbstractBaseUser,PermissionsMixin):
+class User(AbstractBaseUser, PermissionsMixin, CommonBase):
     email = models.EmailField(
         verbose_name='Email Address',
         max_length=255,
@@ -43,10 +44,7 @@ class User(AbstractBaseUser,PermissionsMixin):
     first_name = models.CharField(max_length=150, blank=True)
     last_name = models.CharField(max_length=150, blank=True)
     is_verified = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     objects = UserManager()
 

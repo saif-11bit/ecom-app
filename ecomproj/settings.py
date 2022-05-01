@@ -21,9 +21,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-AUTH_USER_MODEL = 'authorization.User'
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -41,6 +39,8 @@ INSTALLED_APPS = [
     'helper',
     
 ]
+
+AUTH_USER_MODEL = 'authorization.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

@@ -1,6 +1,10 @@
+from itertools import product
+from pickle import TRUE
 from django.db import models
 from helper.models import CommonBase
 from mptt.models import MPTTModel, TreeForeignKey
+from authorization.models import User, UserAddress
+
 
 class Category(MPTTModel, CommonBase):
     """Category for Product: Ex: Men, Topwear, Tshirt.
@@ -93,3 +97,63 @@ class Banner(CommonBase):
     
     def __str__(self):
         return f"{self.seq_no} - {self.category.name}"
+
+DISCOUNT_TYPE = (
+    ('price', 'By Price'),
+    ('percantage', 'By Percentage'),
+)
+
+class Coupon(CommonBase):
+    coupon_code = models.CharField(max_length=20)
+    description = models.TextField()
+    discount_type = models.CharField(max_length=20,choices=DISCOUNT_TYPE)
+    discount = models.DecimalField()
+
+    def __str__(self):
+        return f"{self.coupon_code} | Discount: {self.discount_type} of {self.discount} | Status: {self.is_active}"
+
+
+class Announcement(CommonBase):
+    """Product/Events announcment within date"""
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    landscape_img = models.ImageField()
+    promo_start = models.DateTimeField()
+    promo_end = models.DateTimeField()
+    coupon = models.ForeignKey(Coupon, on_delete=models.DO_NOTHING)
+    category = models.ForeignKey(Category, on_delete=models.PROTECT)
+
+    def __str__(self):
+        return f"{self.name}. From: {self.promo_start} To: {self.promo_end} on {self.category.name}"
+
+
+class Wishlist(CommonBase):
+    """Wishlist of product for an account"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.user.email}: {self.product.name}"
+
+
+class OrderItem(CommonBase):
+    """Each item in the Order"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+    selected_attr_values = models.ManyToManyField(ProductAttrValue, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.user.email}: {self.product.name}: Qty:{self.quantity}"
+
+class Order(CommonBase):
+    """Order of User"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    order_item = models.ManyToManyField(OrderItem, null=True)
+    coupon = models.CharField(max_length=20)
+    address = models.ForeignKey(UserAddress, on_delete=models.DO_NOTHING)
+    delievered = models.BooleanField(default=False)
+    track_order = models.TextField(blank=True) # later use it if we take delhivery/others api for order tracking
+
+    def __str__(self):
+        return f"{self.user.email} ordered at {self.created_at}"

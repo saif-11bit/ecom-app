@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import (BaseUserManager, AbstractBaseUser,PermissionsMixin)
 # from rest_framework_simplejwt.tokens import RefreshToken
 from helper.models import CommonBase
+from product.models import Product
+
 
 class UserManager(BaseUserManager):
     """
@@ -45,7 +47,7 @@ class User(AbstractBaseUser, PermissionsMixin, CommonBase):
     last_name = models.CharField(max_length=150, blank=True)
     is_verified = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
-
+    # we will add the profile photo here and other user fields
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
@@ -60,3 +62,39 @@ class User(AbstractBaseUser, PermissionsMixin, CommonBase):
     #         'refresh':str(refresh),
     #         'access':str(refresh.access_token),
     #     }
+
+# No need for model account
+
+class UserAddress(CommonBase):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    phone_num = models.CharField(max_length=30)
+    is_default = models.BooleanField(default=False)
+    state = models.CharField(max_length=50)
+    city = models.CharField(max_length=50)
+    street_add = models.TextField()
+    pin_code = models.CharField(max_length=10)
+
+    def __str__(self):
+        return f"{self.user.email}: {self.city} {self.state} {self.pin_code}"
+
+
+RATING = (
+   ('1', '1'),
+   ('2', '2'),
+   ('3', '3'),
+   ('4', '4'),
+   ('5', '5')
+)
+
+class ProdReview(CommonBase):
+    """Review for Prodct by User"""
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    rating = models.CharField(max_length=2, choices=RATING)
+    title = models.CharField(max_length=200)
+    comment = models.TextField()
+    image_one = models.ImageField(blank=True)
+    image_two = models.ImageField(blank=True)
+
+    def __str__(self):
+        return f"{self.product.title}: {self.title}"

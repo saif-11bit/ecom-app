@@ -22,16 +22,16 @@ class ProductAttr(models.Model):
     """ProductAttr is the attribute of the product such as: Size, Color etc."""
     name = models.CharField(max_length=100)
     desc = models.TextField()
-    
+
     def __str__(self):
         return f"{self.name}: {self.desc}"
-    
-    
+
+
 class ProductAttrValue(models.Model):
     """ProductAttrValue consist of a attr_value with parent ProductAttr. Ex: Size-S,M,L,XL."""
     prod_attr = models.ForeignKey(ProductAttr, on_delete=models.CASCADE)
     attr_value = models.CharField(max_length=200)
-    
+
     def __str__(self):
         return f"{self.attr_value} of {self.prod_attr.name}"
 
@@ -51,18 +51,18 @@ class Product(CommonBase):
     selling_price = models.IntegerField()
     description = models.TextField()
     slug = models.SlugField(max_length=300)
-    attr_values =  models.ManyToManyField(ProductAttrValue)
+    attr_values = models.ManyToManyField(ProductAttrValue)
     prod_type = models.ForeignKey(ProductType, on_delete=models.PROTECT)
-    
+
     def __str__(self):
         return f"{self.name}: {self.category.name}"
 
-    
+
 class ProdMedia(CommonBase):
     """Media files for Products"""
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     image = models.ImageField()
-    
+
     def __str__(self) -> str:
         return f'{self.product.name}'
 
@@ -70,42 +70,44 @@ class ProdMedia(CommonBase):
 class EcomPlatform(models.Model):
     """EcomPlatform is where business sell their product on. For ex: Amazon, Flipkart etc."""
     name = models.CharField(max_length=100)
-    
+
     def __str__(self):
         return "{self.name}"
-    
+
 
 class EcomProduct(models.Model):
-    """EcomProduct is the product and where else do you sell that product. 
+    """EcomProduct is the product and where else do you sell that product.
     Ex: Blue Kurta with T-shape also available Amazon."""
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     platform = models.ForeignKey(EcomPlatform, on_delete=models.CASCADE)
     link = models.URLField(max_length=300)
-    
+
     def __str__(self):
         return f"{self.platform}: {self.product}"
-    
-    
+
+
 class Banner(CommonBase):
     """Banner/Carousel on the Website."""
     landscape_img = models.ImageField()
     seq_no = models.IntegerField()
     slug = models.SlugField(max_length=300)
     category = models.ForeignKey(Category, on_delete=models.PROTECT, null=True)
-    
+
     def __str__(self):
         return f"{self.seq_no} - {self.category.name}"
+
 
 DISCOUNT_TYPE = (
     ('price', 'By Price'),
     ('percantage', 'By Percentage'),
 )
 
+
 class Coupon(CommonBase):
     coupon_code = models.CharField(max_length=20)
     description = models.TextField()
-    discount_type = models.CharField(max_length=20,choices=DISCOUNT_TYPE)
-    discount = models.DecimalField(max_digits=4,decimal_places=2)
+    discount_type = models.CharField(max_length=20, choices=DISCOUNT_TYPE)
+    discount = models.DecimalField(max_digits=4, decimal_places=2)
 
     def __str__(self):
         return f"{self.coupon_code} | Discount: {self.discount_type} of {self.discount} | Status: {self.is_active}"
@@ -144,6 +146,7 @@ class OrderItem(CommonBase):
     def __str__(self):
         return f"{self.user.email}: {self.product.name}: Qty:{self.quantity}"
 
+
 class Order(CommonBase):
     """Order of User"""
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -151,19 +154,18 @@ class Order(CommonBase):
     coupon = models.CharField(max_length=20)
     address = models.ForeignKey(UserAddress, on_delete=models.DO_NOTHING)
     delievered = models.BooleanField(default=False)
-    track_order = models.TextField(blank=True) # later use it if we take delhivery/others api for order tracking
+    track_order = models.TextField(blank=True)  # later use it if we take delhivery/others api for order tracking
 
     def __str__(self):
         return f"{self.user.email} ordered at {self.created_at}"
 
 
 RATING = (
-   ('1', '1'),
-   ('2', '2'),
-   ('3', '3'),
-   ('4', '4'),
-   ('5', '5')
-)
+         ('1', '1'),
+         ('2', '2'),
+         ('3', '3'),
+         ('4', '4'),
+         ('5', '5'))
 
 
 class ProdReview(CommonBase):

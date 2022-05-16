@@ -3,7 +3,7 @@ from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_swagger.views import get_swagger_view
 
-schema_view = get_swagger_view(title="News Contents API")
+schema_view = get_swagger_view(title="Ecommerce API")
 
 urlpatterns = [
     path('api/docs/', schema_view),

@@ -1,3 +1,9 @@
-Swagger
-Serializers
-Views
+Anas - Serializers
+Anas & Saif - Views
+Saif - simplejwt implementation in authorization
+
+Parallely:
+Anas - React Js Template
+Anas & Saif - Components
+Anas - Axios all apis in a file
+

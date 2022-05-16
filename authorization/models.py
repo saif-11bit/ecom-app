@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import (BaseUserManager, AbstractBaseUser,PermissionsMixin)
+from django.contrib.auth.models import (BaseUserManager, AbstractBaseUser, PermissionsMixin)
 # from rest_framework_simplejwt.tokens import RefreshToken
 from helper.models import CommonBase
 
@@ -8,20 +8,19 @@ class UserManager(BaseUserManager):
     """
     Creates and saves user with given email and password
     """
-    def create_user(self, email,password=None):
+    def create_user(self, email, password=None):
 
         if not email:
             raise ValueError('User must have email')
 
         user = self.model(
-            email = self.normalize_email(email,),
+            email=self.normalize_email(email,),
         )
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    
-    def create_superuser(self, email,password=None):
+    def create_superuser(self, email, password=None):
         """
         Creates and saves superuser with given email and password
         """
@@ -29,8 +28,8 @@ class UserManager(BaseUserManager):
             email=email,
             password=password,
         )
-        user.is_superuser=True
-        user.is_staff=True
+        user.is_superuser = True
+        user.is_staff = True
         user.save(using=self._db)
         return user
 
@@ -61,8 +60,8 @@ class User(AbstractBaseUser, PermissionsMixin, CommonBase):
     #         'refresh':str(refresh),
     #         'access':str(refresh.access_token),
     #     }
-
 # No need for model account
+
 
 class UserAddress(CommonBase):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -75,4 +74,3 @@ class UserAddress(CommonBase):
 
     def __str__(self):
         return f"{self.user.email}: {self.city} {self.state} {self.pin_code}"
-    

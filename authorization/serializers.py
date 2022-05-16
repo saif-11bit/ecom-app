@@ -7,9 +7,9 @@
 #     class Meta:
 #         fields = '__all__'
 #         model = User 
-        
+
 
 # class UserAddressSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         fields = '__all__'
-#         model = UserAddress 
+#         model = UserAddress

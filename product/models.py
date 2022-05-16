@@ -1,5 +1,3 @@
-from itertools import product
-from pickle import TRUE
 from django.db import models
 from helper.models import CommonBase
 from mptt.models import MPTTModel, TreeForeignKey
@@ -107,7 +105,7 @@ class Coupon(CommonBase):
     coupon_code = models.CharField(max_length=20)
     description = models.TextField()
     discount_type = models.CharField(max_length=20,choices=DISCOUNT_TYPE)
-    discount = models.DecimalField()
+    discount = models.DecimalField(max_digits=4,decimal_places=2)
 
     def __str__(self):
         return f"{self.coupon_code} | Discount: {self.discount_type} of {self.discount} | Status: {self.is_active}"
@@ -141,7 +139,7 @@ class OrderItem(CommonBase):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField()
-    selected_attr_values = models.ManyToManyField(ProductAttrValue, null=True, blank=True)
+    selected_attr_values = models.ManyToManyField(ProductAttrValue, blank=True)
 
     def __str__(self):
         return f"{self.user.email}: {self.product.name}: Qty:{self.quantity}"
@@ -149,7 +147,7 @@ class OrderItem(CommonBase):
 class Order(CommonBase):
     """Order of User"""
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    order_item = models.ManyToManyField(OrderItem, null=True)
+    order_item = models.ManyToManyField(OrderItem)
     coupon = models.CharField(max_length=20)
     address = models.ForeignKey(UserAddress, on_delete=models.DO_NOTHING)
     delievered = models.BooleanField(default=False)
@@ -157,3 +155,26 @@ class Order(CommonBase):
 
     def __str__(self):
         return f"{self.user.email} ordered at {self.created_at}"
+
+
+RATING = (
+   ('1', '1'),
+   ('2', '2'),
+   ('3', '3'),
+   ('4', '4'),
+   ('5', '5')
+)
+
+
+class ProdReview(CommonBase):
+    """Review for Prodct by User"""
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    rating = models.CharField(max_length=2, choices=RATING)
+    title = models.CharField(max_length=200)
+    comment = models.TextField()
+    image_one = models.ImageField(blank=True)
+    image_two = models.ImageField(blank=True)
+
+    def __str__(self):
+        return f"{self.product.title}: {self.title}"

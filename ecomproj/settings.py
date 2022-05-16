@@ -32,12 +32,14 @@ INSTALLED_APPS = [
     # third party apps
     'rest_framework',
     'mptt',
+    'corsheaders',
+    'rest_framework_simplejwt',
+    'rest_framework_swagger',
     # apps
     'product',
     'authorization',
-    #custom base model app
+    # custom base model app
     'helper',
-    
 ]
 
 AUTH_USER_MODEL = 'authorization.User'
@@ -50,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'ecomproj.urls'
@@ -82,8 +85,8 @@ DATABASES = {
         'NAME': os.getenv('DBNAME'),
         'USER': os.getenv('DBUSER'),
         'PASSWORD': os.getenv('PASSWORD'),
-        'HOST' : os.getenv('HOST'),
-        'PORT' : ''
+        'HOST': os.getenv('HOST'),
+        'PORT': ''
     }
 }
 
@@ -128,3 +131,14 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CORS_ORIGIN_ALLOW_ALL = True
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': ["rest_framework.permissions.IsAuthenticated"],
+    'DEFAULT_PARSER_CLASSES': ['rest_framework.parsers.JSONParser'],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+}

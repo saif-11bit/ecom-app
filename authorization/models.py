@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import (BaseUserManager, AbstractBaseUser,PermissionsMixin)
 # from rest_framework_simplejwt.tokens import RefreshToken
 from helper.models import CommonBase
-from product.models import Product
 
 
 class UserManager(BaseUserManager):
@@ -76,25 +75,4 @@ class UserAddress(CommonBase):
 
     def __str__(self):
         return f"{self.user.email}: {self.city} {self.state} {self.pin_code}"
-
-
-RATING = (
-   ('1', '1'),
-   ('2', '2'),
-   ('3', '3'),
-   ('4', '4'),
-   ('5', '5')
-)
-
-class ProdReview(CommonBase):
-    """Review for Prodct by User"""
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
-    rating = models.CharField(max_length=2, choices=RATING)
-    title = models.CharField(max_length=200)
-    comment = models.TextField()
-    image_one = models.ImageField(blank=True)
-    image_two = models.ImageField(blank=True)
-
-    def __str__(self):
-        return f"{self.product.title}: {self.title}"
+    
